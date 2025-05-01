@@ -1,3 +1,5 @@
-export function multiply(a: number, b: number): number {
-  return a * b;
-}
+import Rating, { type SwipeRatingProps } from './SwipeRating';
+import AirbnbRating, { type TapRatingProps } from './TapRating';
+
+export { Rating, AirbnbRating };
+export type { SwipeRatingProps, TapRatingProps };
