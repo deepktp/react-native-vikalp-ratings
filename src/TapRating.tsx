@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Text,
   View,
+  type ImageStyle,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
@@ -110,7 +111,7 @@ export type TapRatingProps = {
   /**
    * Style for star
    */
-  starStyle?: StyleProp<ViewStyle>;
+  starStyle?: ImageStyle;
 };
 
 const TapRating: React.FunctionComponent<TapRatingProps> = ({

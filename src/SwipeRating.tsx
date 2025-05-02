@@ -102,6 +102,7 @@ const SwipeRating = forwardRef((props: SwipeRatingProps, ref) => {
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
+      //@ts-ignore
       onPanResponderGrant: (event, gesture) => {
         const tapPositionX = gesture.x0 - (centerX || 0) + gesture.dx;
         position.setValue({ x: tapPositionX, y: 0 });
@@ -109,6 +110,8 @@ const SwipeRating = forwardRef((props: SwipeRatingProps, ref) => {
         const rating = getCurrentRating(tapPositionX);
         if (onStartRating) onStartRating(rating);
       },
+
+      //@ts-ignore
       onPanResponderMove: (event, gesture) => {
         const tapPositionX = gesture.x0 - (centerX || 0) + gesture.dx;
         position.setValue({ x: tapPositionX, y: 0 });
@@ -152,6 +155,7 @@ const SwipeRating = forwardRef((props: SwipeRatingProps, ref) => {
 
   useEffect(() => {
     if (ratingRef.current) {
+      //@ts-ignore
       ratingRef.current.measure((fx, fy, width, height, px) => {
         const halfWidth = width / 2;
         const pageXWithinWindow = px % Dimensions.get('window').width;
@@ -276,6 +280,7 @@ const SwipeRating = forwardRef((props: SwipeRatingProps, ref) => {
           style={styles.starsInsideWrapper}
           onLayout={() => {
             if (ratingRef.current) {
+              //@ts-ignore
               ratingRef.current.measure((fx, fy, width, height, px) => {
                 const halfWidth = width / 2;
                 const pageXWithinWindow = px % Dimensions.get('window').width;

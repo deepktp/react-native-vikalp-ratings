@@ -38,7 +38,10 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli lib",
     "prepare": "bob build",
-    "release": "release-it"
+    "release": "release-it",
+    "build": "tsc -p tsconfig.json",
+    "copy-files": "cp -R ./src/images ./dist/images/",
+    "postbuild": "yarn run copy-files"
   },
   "keywords": [
     "react-native",
