@@ -3279,6 +3279,7 @@ __metadata:
     react-dom: 19.0.0
     react-native: 0.79.1
     react-native-builder-bob: ^0.40.7
+    react-native-safe-area-context: ^5.4.0
     react-native-web: ~0.20.0
   languageName: unknown
   linkType: soft
@@ -11506,6 +11507,16 @@ __metadata:
     escape-string-regexp: ^5.0.0
     fast-glob: ^3.3.3
   checksum: 828b8132c0121f23993b34a4a979971b80061ff8810ff1275fc26e76a264d44bad14d219990013a0f4b705ac8e64a270549fbd906bfd4217d468f6aa08ec7712
+  languageName: node
+  linkType: hard
+
+"react-native-safe-area-context@npm:^5.4.0":
+  version: 5.4.0
+  resolution: "react-native-safe-area-context@npm:5.4.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 7d7f9a8278048650fd207d436798bd062d6f78d771cb0665b92aef69dba870251339e6812e1d669fd1958345288bd0f9ac98fbfe353c13958d18b58dc946c341
   languageName: node
   linkType: hard
 
