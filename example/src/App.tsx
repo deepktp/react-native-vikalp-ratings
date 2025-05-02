@@ -1,37 +1,37 @@
-import { View, StyleSheet, Text } from 'react-native';
-import { AirbnbRating } from '@rn-vui/ratings';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
+
+import TapRatingScreen from './TapRatingScreen';
+import SwipeRatingScreen from './SwipeRatingScreen';
+
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Rating</Text>
-      <AirbnbRating
-        count={11}
-        showRating={true}
-        reviews={[
-          'Terrible',
-          'Bad',
-          'Meh',
-          'OK',
-          'Good',
-          'Hmm...',
-          'Very Good',
-          'Wow',
-          'Amazing',
-          'Unbelievable',
-          'Jesus',
-        ]}
-        defaultRating={11}
-        size={20}
-      />
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          //@ts-ignore
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          tabBarIcon: ({ focused, color, size }) => {
+            if (route.name === 'TapRating') {
+              return <Ionicons name="star" size={size} color={color} />;
+            } else if (route.name === 'SwipeRating') {
+              return <Ionicons name="star-outline" size={size} color={color} />;
+            }
+
+            return <Ionicons size={size} color={color} />;
+          },
+        })}
+        // tabBarOptions={{
+        //   activeTintColor: 'tomato',
+        //   inactiveTintColor: 'gray',
+        // }}
+      >
+        <Tab.Screen name="TapRating" component={TapRatingScreen} />
+        <Tab.Screen name="SwipeRating" component={SwipeRatingScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
