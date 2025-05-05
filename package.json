@@ -1,6 +1,6 @@
 {
   "name": "@rn-vui/ratings",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "..",
   "source": "./src/index.tsx",
   "main": "./lib/module/index.js",
@@ -50,14 +50,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/deepktp/react-native-viaklp-ratings.git"
+    "url": "git+https://github.com/deepktp/react-native-vikalp-ratings.git"
   },
   "author": "deep <deepktp7@gmail.com> (https://github.com/deepktp)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/deepktp/react-native-viaklp-ratings/issues"
+    "url": "https://github.com/deepktp/react-native-vikalp-ratings/issues"
   },
-  "homepage": "https://github.com/deepktp/react-native-viaklp-ratings#readme",
+  "homepage": "https://github.com/deepktp/react-native-vikalp-ratings#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
