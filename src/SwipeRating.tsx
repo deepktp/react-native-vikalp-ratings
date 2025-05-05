@@ -1,10 +1,5 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  forwardRef,
-  useImperativeHandle,
-} from 'react';
+import React, { useEffect } from 'react';
+
 import {
   View,
   Text,
@@ -24,7 +19,13 @@ const HEART_IMAGE = require('./images/heart.png');
 const ROCKET_IMAGE = require('./images/rocket.png');
 const BELL_IMAGE = require('./images/bell.png');
 
-const TYPES = {
+const TYPES: {
+  [key: string]: {
+    source: any;
+    color: string;
+    backgroundColor: string;
+  };
+} = {
   star: {
     source: STAR_IMAGE,
     color: '#f1c40f',
@@ -45,145 +46,293 @@ const TYPES = {
     color: '#f39c12',
     backgroundColor: 'white',
   },
-  custom: {},
+  custom: {
+    source: STAR_IMAGE,
+    color: '#f1c40f',
+    backgroundColor: 'white',
+  },
+};
+
+//@ts-ignore
+const fractionsType: any = (props, propName, componentName) => {
+  if (props[propName]) {
+    const value = props[propName];
+
+    if (typeof value === 'number') {
+      return value >= 0 && value <= 20
+        ? null
+        : new Error(
+            `\`${propName}\` in \`${componentName}\` must be between 0 and 20`
+          );
+    }
+
+    return new Error(
+      `\`${propName}\` in \`${componentName}\` must be a number`
+    );
+  }
 };
 
 export type SwipeRatingProps = {
+  /**
+   * Graphic used for represent a rating
+   *
+   * @default star
+   */
   type?: 'star' | 'heart' | 'rocket' | 'bell' | 'custom';
+
+  /**
+   * Pass in a custom image source; use this along with type='custom' prop above
+   */
   ratingImage?: React.ReactNode;
+
+  /**
+   * Pass in a custom fill-color for the rating icon; use this along with type='custom' prop above
+   *
+   * @default '#f1c40f'
+   */
   ratingColor?: string;
+
+  /**
+   * Pass in a custom background-fill-color for the rating icon; use this along with type='custom' prop above
+   *
+   * @default 'white'
+   */
   ratingBackgroundColor?: string;
+
+  /**
+   * Number of rating images to display
+   *
+   * @default 5
+   */
   ratingCount?: number;
+
+  /**
+   * Color used for the text labels
+   *
+   * @default #f1c40f
+   */
   ratingTextColor?: string;
+
+  /**
+   * The size of each rating image
+   *
+   * @default 50
+   */
   imageSize?: number;
+
+  /**
+   * Callback method when the user starts rating.
+   */
   onStartRating?: Function;
+
+  /**
+   * Callback method when the user finishes rating. Gives you the final rating value as a whole number
+   */
   onFinishRating?: Function;
+
+  /**
+   * Displays the Built-in Rating UI to show the rating value in real-time
+   *
+   * @default false
+   */
   showRating?: boolean;
+
+  /**
+   * Exposes style prop to add additional styling to the container view
+   */
   style?: StyleProp<ViewStyle>;
+
+  /**
+   * Whether the rating can be modified by the user
+   *
+   * @default false
+   */
   readonly?: boolean;
+
+  /**
+   * Whether the text is read only
+   *
+   * @default false
+   */
   showReadOnlyText?: boolean;
+
+  /**
+   * The initial rating to render
+   *
+   * @default ratingCount/2
+   */
   startingValue?: number;
-  fractions?: number;
+
+  /**
+   * The number of decimal places for the rating value; must be between 0 and 20
+   *
+   * @default 0
+   */
+  fractions?: typeof fractionsType;
+
+  /**
+   * The minimum value the user can select
+   *
+   * @default 0
+   */
   minValue?: number;
+
+  /**
+   * Callback method when the user is swiping.
+   */
   onSwipeRating?: (value: number) => void;
+
+  /**
+   * Color used for the background
+   */
   tintColor?: string;
+
+  /**
+   * The number to jump per swipe
+   *
+   * @default 0 (not to jump)
+   */
   jumpValue?: number;
 };
 
-const SwipeRating = forwardRef((props: SwipeRatingProps, ref) => {
-  const {
-    type = 'star',
-    ratingImage = STAR_IMAGE,
-    ratingColor = '#f1c40f',
-    ratingBackgroundColor = 'white',
-    ratingCount = 5,
-    showReadOnlyText = true,
-    imageSize = 40,
-    minValue = 0,
-    jumpValue = 0,
-    onStartRating,
-    onSwipeRating,
-    onFinishRating,
-    fractions,
-    startingValue = ratingCount / 2,
-    readonly,
-    showRating,
-    style,
-    ratingTextColor,
-    tintColor,
-  } = props;
+const SwipeRating: React.FC<SwipeRatingProps> = ({
+  type = 'star',
+  ratingImage = STAR_IMAGE,
+  ratingColor = '#f1c40f',
+  ratingBackgroundColor = 'white',
+  ratingTextColor = '#f1c40f',
+  ratingCount = 5,
+  showReadOnlyText = false,
+  imageSize = 50,
+  minValue = 0,
+  jumpValue = 0,
+  onStartRating = () => {},
+  onSwipeRating = () => {},
+  onFinishRating = () => {},
+  fractions = 0,
+  readonly = false,
+  style,
+  showRating = false,
+  startingValue = ratingCount / 2,
+}) => {
+  const position = React.useRef(new Animated.ValueXY());
 
-  const [position] = useState(new Animated.ValueXY());
-  const [value, setValue] = useState<number | undefined>(undefined);
-  const [centerX, setCenterX] = useState<number | undefined>(undefined);
-  const [display, setDisplay] = useState(false);
-  const ratingRef = useRef<View>(null);
+  const [display, setDisplay] = React.useState<boolean>(false);
+  const [isComponentMounted, setIsComponentMounted] =
+    React.useState<boolean>(false);
 
-  const panResponder = useRef(
+  const ratingRef = React.useRef<any>(null);
+  const [value, setValue] = React.useState<number>(startingValue);
+
+  const [centerX, setCenterX] = React.useState<number>(0);
+
+  const panResponder = React.useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      //@ts-ignore
+      // @ts-ignore
       onPanResponderGrant: (event, gesture) => {
-        const tapPositionX = gesture.x0 - (centerX || 0) + gesture.dx;
-        position.setValue({ x: tapPositionX, y: 0 });
-        setValue(tapPositionX);
-        const rating = getCurrentRating(tapPositionX);
-        if (onStartRating) onStartRating(rating);
-      },
+        const tapPositionX = gesture.x0 - centerX + gesture.dx;
+        if (isComponentMounted) {
+          // this.setState({ position: newPosition, value: tapPositionX });
+          setValue(tapPositionX);
+          position.current.setValue({ x: tapPositionX, y: 0 });
+          const rating = getCurrentRating(tapPositionX);
 
-      //@ts-ignore
+          if (typeof onStartRating === 'function') {
+            onStartRating(rating);
+          }
+        }
+      },
+      // @ts-ignore
       onPanResponderMove: (event, gesture) => {
-        const tapPositionX = gesture.x0 - (centerX || 0) + gesture.dx;
-        position.setValue({ x: tapPositionX, y: 0 });
-        setValue(tapPositionX);
-        const rating = getCurrentRating(tapPositionX);
-        if (onSwipeRating) onSwipeRating(rating);
+        const tapPositionX = gesture.x0 - centerX + gesture.dx;
+        if (isComponentMounted) {
+          setValue(tapPositionX);
+          position.current.setValue({ x: tapPositionX, y: 0 });
+          const rating = getCurrentRating(tapPositionX);
+          onSwipeRating(rating);
+        }
       },
       onPanResponderRelease: () => {
-        const rating = getCurrentRating(value || 0);
+        const rating = getCurrentRating(value);
+
         if (rating >= minValue) {
-          if (!fractions) setCurrentRating(rating);
-          if (onFinishRating) onFinishRating(rating);
+          if (!fractions) {
+            // 'round up' to the nearest rating image
+            setCurrentRating(rating);
+          }
+          onFinishRating(rating);
         }
       },
     })
-  ).current;
+  );
 
   const setCurrentRating = React.useCallback(
     (rating: number) => {
+      // `initialRating` corresponds to `startingValue` in the getter. Naming it
+      // Differently here avoids confusion with `value` below.
       const initialRating = ratingCount / 2;
-      let value = 0;
+
+      let localValue = null;
 
       if (rating > ratingCount) {
-        value = (ratingCount * imageSize) / 2;
+        localValue = (ratingCount * imageSize) / 2;
       } else if (rating < 0) {
-        value = (-ratingCount * imageSize) / 2;
+        localValue = (-ratingCount * imageSize) / 2;
+      } else if (rating < ratingCount / 2 || rating > ratingCount / 2) {
+        localValue = (rating - initialRating) * imageSize;
       } else {
-        value = (rating - initialRating) * imageSize;
+        localValue = 0;
       }
-
-      position.setValue({ x: value, y: 0 });
-      setValue(value);
+      if (isComponentMounted) {
+        position.current.setValue({ x: localValue, y: 0 });
+      }
     },
-    [ratingCount, imageSize, position]
+    [ratingCount, imageSize, isComponentMounted]
   );
 
   useEffect(() => {
+    setIsComponentMounted(true);
     setDisplay(true);
+  }, []);
+
+  useEffect(() => {
     setCurrentRating(startingValue);
   }, [startingValue, setCurrentRating]);
 
   useEffect(() => {
-    if (ratingRef.current) {
-      //@ts-ignore
-      ratingRef.current.measure((fx, fy, width, height, px) => {
-        const halfWidth = width / 2;
-        const pageXWithinWindow = px % Dimensions.get('window').width;
-        setCenterX(pageXWithinWindow + halfWidth);
-      });
+    if (type === 'custom') {
+      const custom = {
+        source: ratingImage,
+        color: ratingColor,
+        backgroundColor: ratingBackgroundColor,
+      };
+
+      TYPES.custom = custom;
     }
-  }, [ratingRef]);
+  }, [type, ratingImage, ratingColor, ratingBackgroundColor]);
 
-  useImperativeHandle(ref, () => ({
-    setCurrentRating,
-  }));
+  const getCurrentRating = (localValue: number) => {
+    const localStartingValue = ratingCount / 2;
 
-  const getCurrentRating = (value: number) => {
-    const startingValue = ratingCount / 2;
-    let currentRating = minValue || 0;
+    let currentRating = minValue ? minValue : 0;
 
-    if (value > (ratingCount * imageSize) / 2) {
+    if (localValue > (ratingCount * imageSize) / 2) {
       currentRating = ratingCount;
-    } else if (value < (-ratingCount * imageSize) / 2) {
-      currentRating = minValue || 0;
-    } else {
-      const diff = value / imageSize;
-      currentRating = startingValue + diff;
+    } else if (localValue < (-ratingCount * imageSize) / 2) {
+      currentRating = minValue ? minValue : 0;
+    } else if (localValue <= imageSize || localValue > imageSize) {
+      const diff = localValue / imageSize;
+
+      currentRating = localStartingValue + diff;
       currentRating = fractions
         ? Number(currentRating.toFixed(fractions))
         : Math.ceil(currentRating);
+    } else {
+      currentRating = fractions
+        ? Number(localStartingValue.toFixed(fractions))
+        : Math.ceil(localStartingValue);
     }
-
     if (jumpValue > 0 && jumpValue < ratingCount) {
       return Math.ceil(currentRating * (1 / jumpValue)) / (1 / jumpValue);
     } else {
@@ -191,10 +340,40 @@ const SwipeRating = forwardRef((props: SwipeRatingProps, ref) => {
     }
   };
 
-  const getPrimaryViewStyle = () => {
+  const displayCurrentRating = () => {
+    const color = ratingTextColor || TYPES[type]?.color;
+    return (
+      <View style={styles.showRatingView}>
+        <View style={styles.ratingView}>
+          <Text style={[styles.ratingText, { color }]}>Rating: </Text>
+          <Text style={[styles.currentRatingText, { color }]}>
+            {getCurrentRating(value)}
+          </Text>
+          <Text style={[styles.maxRatingText, { color }]}>/{ratingCount}</Text>
+        </View>
+        <View>
+          {readonly && showReadOnlyText && (
+            <Text style={[styles.readonlyLabel, { color }]}>(readonly)</Text>
+          )}
+        </View>
+      </View>
+    );
+  };
+
+  const handleLayoutChange = () => {
     //@ts-ignore
-    const { color } = TYPES[type];
-    const width = position.x.interpolate({
+    ratingRef.current.measure((fx, fy, width, height, px) => {
+      const halfWidth = width / 2;
+      const pageXWithinWindow = px % Dimensions.get('window').width;
+
+      setCenterX(pageXWithinWindow + halfWidth);
+    });
+  };
+
+  const getPrimaryViewStyle = () => {
+    const color = TYPES[type]?.color;
+
+    const width = position.current.x.interpolate({
       inputRange: [
         -ratingCount * (imageSize / 2),
         0,
@@ -212,9 +391,9 @@ const SwipeRating = forwardRef((props: SwipeRatingProps, ref) => {
   };
 
   const getSecondaryViewStyle = () => {
-    //@ts-ignore
-    const { backgroundColor } = TYPES[type];
-    const width = position.x.interpolate({
+    const backgroundColor = TYPES[type]?.backgroundColor;
+
+    const width = position.current.x.interpolate({
       inputRange: [
         -ratingCount * (imageSize / 2),
         0,
@@ -232,61 +411,29 @@ const SwipeRating = forwardRef((props: SwipeRatingProps, ref) => {
   };
 
   const renderRatings = () => {
-    //@ts-ignore
-    const { source } = TYPES[type];
-    return Array.from({ length: ratingCount }).map((_, index) => (
-      //@ts-ignore
-      <View key={index} style={styles.starContainer}>
+    const source = TYPES[type]?.source;
+    return Array.from({ length: ratingCount }, (_, index) => (
+      <View key={index} style={styles.starsWrapper}>
         <Image
           source={source}
-          style={{ width: imageSize, height: imageSize, tintColor }}
+          style={{
+            width: imageSize,
+            height: imageSize,
+            tintColor: ratingColor,
+          }}
         />
       </View>
     ));
   };
 
-  const displayCurrentRating = () => {
-    //@ts-ignore
-    const color = ratingTextColor || TYPES[type].color;
-    return (
-      <View style={styles.showRatingView}>
-        <View style={styles.ratingView}>
-          <Text style={[styles.ratingText, { color }]}>Rating: </Text>
-          <Text style={[styles.currentRatingText, { color }]}>
-            {getCurrentRating(value || 0)}
-          </Text>
-          <Text style={[styles.maxRatingText, { color }]}>/{ratingCount}</Text>
-        </View>
-        {readonly && showReadOnlyText && (
-          <Text style={[styles.readonlyLabel, { color }]}>(readonly)</Text>
-        )}
-      </View>
-    );
-  };
-
-  if (type === 'custom') {
-    TYPES.custom = {
-      source: ratingImage,
-      color: ratingColor,
-      backgroundColor: ratingBackgroundColor,
-    };
-  }
-
   return display ? (
     <View pointerEvents={readonly ? 'none' : 'auto'} style={style}>
       {showRating && displayCurrentRating()}
-      <View style={styles.starsWrapper} {...panResponder.panHandlers}>
+      <View style={styles.starsWrapper} {...panResponder.current.panHandlers}>
         <View
           style={styles.starsInsideWrapper}
           onLayout={() => {
-            if (ratingRef.current) {
-              //@ts-ignore
-              ratingRef.current.measure((fx, fy, width, height, px) => {
-                const halfWidth = width / 2;
-                const pageXWithinWindow = px % Dimensions.get('window').width;
-                setCenterX(pageXWithinWindow + halfWidth);
-              });
-            }
+            handleLayoutChange();
           }}
           ref={ratingRef}
         >
@@ -297,7 +444,7 @@ const SwipeRating = forwardRef((props: SwipeRatingProps, ref) => {
       </View>
     </View>
   ) : null;
-});
+};
 
 const styles = StyleSheet.create({
   starsWrapper: {
