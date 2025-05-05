@@ -15,15 +15,13 @@
     "@react-navigation/native": "^7.1.6",
     "expo": "~53.0.4",
     "expo-status-bar": "~2.2.3",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "react-native": "0.79.1",
     "react-native-safe-area-context": "^5.4.0",
     "react-native-web": "~0.20.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "react-native-builder-bob": "^0.40.7"
+    "react-native-builder-bob": "^0.40.7",
+    "react-native-monorepo-config": "^0.1.8"
   },
   "private": true
 }

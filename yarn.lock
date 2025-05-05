@@ -3275,10 +3275,8 @@ __metadata:
     "@react-navigation/native": ^7.1.6
     expo: ~53.0.4
     expo-status-bar: ~2.2.3
-    react: 19.0.0
-    react-dom: 19.0.0
-    react-native: 0.79.1
     react-native-builder-bob: ^0.40.7
+    react-native-monorepo-config: ^0.1.8
     react-native-safe-area-context: ^5.4.0
     react-native-web: ~0.20.0
   languageName: unknown
@@ -3306,9 +3304,9 @@ __metadata:
     jest: ^29.7.0
     prettier: ^3.0.3
     react: 19.0.0
+    react-dom: 19.0.0
     react-native: 0.79.1
     react-native-builder-bob: ^0.40.7
-    react-native-monorepo-config: ^0.1.7
     release-it: ^17.10.0
     typescript: ^5.2.2
   peerDependencies:
@@ -11500,13 +11498,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-monorepo-config@npm:^0.1.7":
-  version: 0.1.7
-  resolution: "react-native-monorepo-config@npm:0.1.7"
+"react-native-monorepo-config@npm:^0.1.8":
+  version: 0.1.8
+  resolution: "react-native-monorepo-config@npm:0.1.8"
   dependencies:
     escape-string-regexp: ^5.0.0
     fast-glob: ^3.3.3
-  checksum: 828b8132c0121f23993b34a4a979971b80061ff8810ff1275fc26e76a264d44bad14d219990013a0f4b705ac8e64a270549fbd906bfd4217d468f6aa08ec7712
+  checksum: 3c9abfd2dcd7d4da0d5d8d59f1e997f68283a6dc04935c310fece2a6ab62045e2b19f976d27894243f1cba6d9b9f1c3771e9f1428cd7cb0f7e00ed9c1e7251a5
   languageName: node
   linkType: hard
 
