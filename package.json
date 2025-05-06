@@ -140,7 +140,7 @@
       [
         "module",
         {
-          "esm": true
+          "esm": false
         }
       ],
       [
