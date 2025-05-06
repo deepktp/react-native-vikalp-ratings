@@ -11,7 +11,6 @@ import {
   Dimensions,
   type StyleProp,
   type ViewStyle,
-  useAnimatedValue,
 } from 'react-native';
 
 // RATING IMAGES WITH STATIC BACKGROUND COLOR (white)
@@ -216,7 +215,7 @@ const SwipeRating: React.FC<SwipeRatingProps> = ({
   showRating = false,
   startingValue = ratingCount / 2,
 }) => {
-  const position = useAnimatedValue(0);
+  const position = React.useRef(new Animated.Value(0)).current;
   const ratingRef = React.useRef<any>(null);
   const ratingBackdropValue = React.useRef<number>(0);
   const centerX = React.useRef<number>(0);
