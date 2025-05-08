@@ -404,9 +404,10 @@ const SwipeRating: React.FC<SwipeRatingProps> = ({
   const renderRatings = React.useMemo(() => {
     const source = TYPES[type]?.source;
     return Array.from({ length: ratingCount }, (_, index) => (
-      <View key={index} style={styles.starsWrapper}>
+      <View key={index} style={styles.starsWrapper} testID="RNVUI__Star">
         <Image
           source={source}
+          testID="RNVUI__Star-image"
           style={{
             width: imageSize,
             height: imageSize,
