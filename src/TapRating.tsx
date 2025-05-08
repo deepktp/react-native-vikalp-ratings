@@ -43,7 +43,7 @@ export type TapRatingProps = {
   reviewColor?: string;
 
   /**
-   * Size value for review.
+   * Size value for review text.
    *
    * @default 40
    */
@@ -120,6 +120,7 @@ const TapRating: React.FunctionComponent<TapRatingProps> = ({
   showRating = true,
   reviewColor = 'rgba(230, 196, 46, 1)',
   reviewSize = 25,
+  size: reviewImageSize = 40,
   defaultRating = 3,
   starContainerStyle,
   ratingContainerStyle,
@@ -163,7 +164,7 @@ const TapRating: React.FunctionComponent<TapRatingProps> = ({
         isDisabled={isDisabled}
         selectedColor={selectedColor}
         unSelectedColor={unSelectedColor}
-        size={reviewSize}
+        size={reviewImageSize}
         starImage={starImage}
         starStyle={starStyle}
       />
@@ -173,6 +174,7 @@ const TapRating: React.FunctionComponent<TapRatingProps> = ({
   return (
     <View
       style={StyleSheet.flatten([styles.ratingContainer, ratingContainerStyle])}
+      testID="RNVUI__TapRating"
     >
       {showRating && (
         <Text
@@ -180,12 +182,14 @@ const TapRating: React.FunctionComponent<TapRatingProps> = ({
             styles.reviewText,
             { fontSize: reviewSize, color: reviewColor },
           ]}
+          testID="RNVUI__TapRating-showRating"
         >
           {reviews[position - 1]}
         </Text>
       )}
       <View
         style={StyleSheet.flatten([styles.starContainer, starContainerStyle])}
+        testID="RNVUI__TapRating-starContainer"
       >
         {renderStars(rating_array)}
       </View>
