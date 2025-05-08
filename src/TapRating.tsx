@@ -178,10 +178,10 @@ const TapRating: React.FunctionComponent<TapRatingProps> = ({
     >
       {showRating && (
         <Text
-          style={[
+          style={StyleSheet.flatten([
             styles.reviewText,
             { fontSize: reviewSize, color: reviewColor },
-          ]}
+          ])}
           testID="RNVUI__TapRating-showRating"
         >
           {reviews[position - 1]}
