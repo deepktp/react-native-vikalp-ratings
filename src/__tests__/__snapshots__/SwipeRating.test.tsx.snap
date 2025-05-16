@@ -3,6 +3,7 @@
 exports[`SwipeRating should match snapshot 1`] = `
 <View
   pointerEvents="auto"
+  testID="RNVUI__SwipeRating"
 >
   <View
     onMoveShouldSetResponder={[Function]}
@@ -24,6 +25,7 @@ exports[`SwipeRating should match snapshot 1`] = `
         "justifyContent": "center",
       }
     }
+    testID="RNVUI__SwipeRating-pan"
   >
     <View
       onLayout={[Function]}

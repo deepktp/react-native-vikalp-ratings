@@ -43,4 +43,46 @@ describe('SwipeRating', () => {
   //     expect(swipeRating.props.source).toEqual(customImage); // Check if the image source is the custom image
   //   });
   // });
+
+  it('should render with custom star color', () => {
+    const customStarColor = 'red';
+    const { getAllByTestId } = render(
+      <SwipeRating ratingColor={customStarColor} />
+    );
+    const stars = getAllByTestId('RNVUI__Star-image');
+    stars.forEach((star) => {
+      expect(star.props.style.tintColor).toBe(customStarColor);
+    });
+  });
+
+  it('should render with custom star size', () => {
+    const customStarSize = 50;
+    const { getAllByTestId } = render(
+      <SwipeRating imageSize={customStarSize} />
+    );
+    const stars = getAllByTestId('RNVUI__Star-image');
+    stars.forEach((star) => {
+      expect(star.props.style.width).toBe(customStarSize);
+      expect(star.props.style.height).toBe(customStarSize);
+    });
+  });
+
+  it('should show the correct number of stars', () => {
+    const ratingsCount = 5;
+    const { getAllByTestId } = render(
+      <SwipeRating ratingCount={ratingsCount} />
+    );
+    const stars = getAllByTestId('RNVUI__Star');
+    expect(stars).toHaveLength(ratingsCount);
+  });
+
+  //show rating should show the text
+  it('should show the correct rating text', () => {
+    const ratingsCount = 5;
+    const { getByTestId } = render(
+      <SwipeRating ratingCount={ratingsCount} showRating />
+    );
+    const ratingText = getByTestId('RNVUI__SwipeRating-showRating');
+    expect(ratingText).toBeTruthy();
+  });
 });
