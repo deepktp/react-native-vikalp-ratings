@@ -51,6 +51,7 @@ class TapRatingScreen extends Component {
           <Card title="CUSTOM RATING" containerStyle={styles.card}>
             <AirbnbRating
               count={10}
+              showRating={true}
               reviews={[
                 'Terrible',
                 'Bad',
@@ -64,7 +65,7 @@ class TapRatingScreen extends Component {
                 'Jesus',
               ]}
               defaultRating={5}
-              size={20}
+              reviewSize={10}
               onFinishRating={this.ratingCompleted}
             />
           </Card>

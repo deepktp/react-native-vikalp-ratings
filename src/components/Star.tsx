@@ -55,9 +55,15 @@ const Star: React.FunctionComponent<StarProps> = ({
     fill && selectedColor === null ? STAR_SELECTED_IMAGE : starImage;
 
   return (
-    <TouchableOpacity activeOpacity={1} onPress={spring} disabled={isDisabled}>
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={spring}
+      disabled={isDisabled}
+      testID="RNVUI__Star"
+    >
       <Animated.Image
         source={starSource}
+        testID="RNVUI__Star-image"
         style={StyleSheet.flatten([
           styles.starStyle,
           {

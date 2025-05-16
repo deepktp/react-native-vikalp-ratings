@@ -123,12 +123,12 @@ export type SwipeRatingProps = {
   /**
    * Callback method when the user starts rating.
    */
-  onStartRating?: Function;
+  onStartRating?: (value: number) => void;
 
   /**
    * Callback method when the user finishes rating. Gives you the final rating value as a whole number
    */
-  onFinishRating?: Function;
+  onFinishRating?: (value: number) => void;
 
   /**
    * Displays the Built-in Rating UI to show the rating value in real-time
@@ -404,9 +404,10 @@ const SwipeRating: React.FC<SwipeRatingProps> = ({
   const renderRatings = React.useMemo(() => {
     const source = TYPES[type]?.source;
     return Array.from({ length: ratingCount }, (_, index) => (
-      <View key={index} style={styles.starsWrapper}>
+      <View key={index} style={styles.starsWrapper} testID="RNVUI__Star">
         <Image
           source={source}
+          testID="RNVUI__Star-image"
           style={{
             width: imageSize,
             height: imageSize,
@@ -418,9 +419,16 @@ const SwipeRating: React.FC<SwipeRatingProps> = ({
   }, [ratingCount, imageSize, ratingColor, type]);
 
   return (
-    <View pointerEvents={readonly ? 'none' : 'auto'} style={style}>
+    <View
+      pointerEvents={readonly ? 'none' : 'auto'}
+      style={style}
+      testID="RNVUI__SwipeRating"
+    >
       {showRating && (
-        <View style={styles.showRatingView}>
+        <View
+          style={styles.showRatingView}
+          testID="RNVUI__SwipeRating-showRating"
+        >
           <View style={styles.ratingView}>
             <Text style={[styles.ratingText, { color: ratingTextColor }]}>
               Rating:{' '}
@@ -443,7 +451,11 @@ const SwipeRating: React.FC<SwipeRatingProps> = ({
           </View>
         </View>
       )}
-      <View style={styles.starsWrapper} {...panResponder.panHandlers}>
+      <View
+        style={styles.starsWrapper}
+        {...panResponder.panHandlers}
+        testID="RNVUI__SwipeRating-pan"
+      >
         <View
           style={styles.starsInsideWrapper}
           onLayout={() => {
