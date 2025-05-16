@@ -1,6 +1,6 @@
 {
   "name": "@rn-vui/ratings",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "description": "..",
   "source": "./src/index.tsx",
   "main": "./lib/module/index.js",
